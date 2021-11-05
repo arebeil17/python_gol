@@ -3,17 +3,13 @@ import time
 from colorama import Fore, Back, Style
 from os import system, name
 import sys
-
-grid_moves = {"left": (0, -1), "right": (0, 1),
-              "down": (-1, 0), "up": (1, 0),
-              "diag_up_left": (1, -1), "diag_up_right": (1, 1),
-              "diag_dwn_left": (-1, -1), "diag_dwn_right": (-1, 1)}
+from game_constants import GRID_MOVES_DICT as grid_moves
+import game_modes
+from game_types import GameState
 
 
-def boundary_check(rows, cols, adj_row, adj_col):
-    if adj_row in range(rows) and adj_col in range(cols):
-        return True
-    return False
+def boundary_check(rows, cols, row, col):
+    return (row in range(0, rows) and col in range(0, cols))
 
 
 def compute_alive_adj_cells(rows, cols, current_row, current_col, grid):
@@ -29,29 +25,41 @@ def compute_alive_adj_cells(rows, cols, current_row, current_col, grid):
     return adj_live_cells
 
 
-def evaluate_grid(grid, rows, cols):
-    updated_grid = grid
+def evaluate_grid(state, rows, cols):
+    updated_grid = copy_grid(state.game_grid, rows, cols)
     DEAD = 0
     ALIVE = 1
     num_updates = 0
     for row in range(0, rows):
         for col in range(0, cols):
-            num_adj_alive = compute_alive_adj_cells(rows, cols, row, col, grid)
+            num_adj_alive = compute_alive_adj_cells(
+                rows, cols, row, col, state.game_grid)
 
-            if grid[row][col] == ALIVE:
+            if state.game_grid[row][col] == ALIVE:
                 # Cell dies if under/over-population conditon is true
                 if num_adj_alive < 2 or num_adj_alive > 3:
-                    updated_grid[row][col] = DEAD
+                    updated_grid[row][col] = 0  # Death of cell
                     num_updates += 1
-            elif grid[row][col] == DEAD and num_adj_alive == 3:
-                updated_grid[row][col] = ALIVE  # Reproduction
+            elif state.game_grid[row][col] == DEAD and num_adj_alive == 3:
+                updated_grid[row][col] = 1  # Reproduction
                 num_updates += 1
 
-    return updated_grid, num_updates
+    state.game_grid = updated_grid
+    state.updates += num_updates
+
+    return state
 
 
 def make_grid(rows, cols):
     return [[0 for i in range(cols)] for j in range(rows)]
+
+
+def copy_grid(grid, rows, cols):
+    grid_copy = [[0 for i in range(cols)] for j in range(rows)]
+    for row in range(0, rows):
+        for col in range(0, cols):
+            grid_copy[row][col] = grid[row][col]
+    return grid_copy
 
 
 def randomize_grid(grid, num_live_per_row):
@@ -91,7 +99,8 @@ def clear():
         _ = system('clear')
 
 
-def print_grid(grid):
+def print_grid(grid, output_stream, generations, total_cell_updates):
+
     gen_grid_string = ""
     for row in grid:
         gen_row_string = "\n"
@@ -104,62 +113,32 @@ def print_grid(grid):
 
         gen_grid_string += gen_row_string
 
-    print(gen_grid_string, Style.RESET_ALL, end="")
+    output_string = gen_grid_string + Style.RESET_ALL + \
+        " \nGeneration: " + str(generations) + \
+        " Cell updates: " + str(total_cell_updates) + "\n"
+    clear()
+    output_stream.write(output_string)
+    output_stream.flush()
 
 
-rows = int(input("Specify number of rows: "))
-cols = int(input("Specify number of cols: "))
-auto = ""
-while True:
-    auto = input("Would you like game to automatically generate (Y/N): ")
-    auto = auto.lower()
-    if auto == "y" or auto == "n":
-        break
+def print_cursor(grid, rows, cols, cursor, output_stream):
 
+    gen_grid_string = ""
+    for row in range(0, rows):
+        gen_row_string = "\n"
+        for col in range(0, cols):
 
-grid = make_grid(rows, cols)
-grid = randomize_grid(grid, rows)
-#grid = blinker_grid(grid, rows)
+            if row == cursor[0] and col == cursor[1]:
+                gen_row_string += Fore.MAGENTA + chr(0x25A0)
+            elif grid[row][col] == 1:
+                gen_row_string += Fore.GREEN + chr(0x25A0)
+            else:
+                gen_row_string += Fore.RED + chr(0x25A1)
+            gen_row_string += " "
 
-generations = 0
-num_cell_updates = 0
-total_cell_updates = 0
-
-clear()
-print("Initial state of grid:")
-print_grid(grid)
-
-stale_cnt = 0
-
-while(True):
-    sys.stdout.flush()
-    print("\nGeneration:", generations, "Cell updates:", total_cell_updates)
-
-    if auto == 'y':
-
-        time.sleep(0.10)
-    else:
-        user_input = input("Hit Enter to continue or Q to quit(): ")
-        if user_input.lower() == "q":
-            break
+        gen_grid_string += gen_row_string
 
     clear()
-    print_grid(grid)
-    sys.stdout.flush()
-
-    prev_cell_updates = num_cell_updates
-    grid, num_cell_updates = evaluate_grid(grid, rows, cols)
-
-    if prev_cell_updates == num_cell_updates:
-        stale_cnt += 1
-    else:
-        stale_cnt = 0
-
-    if stale_cnt == 2:
-        print("\nGrowth has ended at generation:", generations,
-              "Total updates:", total_cell_updates)
-        print("Simulation ended!")
-        break
-
-    total_cell_updates += num_cell_updates
-    generations += 1
+    output_string = gen_grid_string + Style.RESET_ALL + "\n"
+    output_stream.write(output_string)
+    output_stream.flush()
