@@ -1,11 +1,7 @@
 import random
-import time
 from colorama import Fore, Back, Style
-from os import system, name
-import sys
-from game_constants import GRID_MOVES_DICT as grid_moves
-import game_modes
-from game_types import GameState
+from gol_game_pkg.game_constants import GRID_MOVES_DICT as grid_moves
+from gol_game_pkg.game_types import GameState
 
 
 def boundary_check(rows, cols, row, col):
@@ -86,59 +82,3 @@ def blinker_grid(grid, rows):
         row_cnt += 1
 
     return grid
-
-
-def clear():
-
-    # for windows
-    if name == 'nt':
-        _ = system('cls')
-
-    # for mac and linux(here, os.name is 'posix')
-    else:
-        _ = system('clear')
-
-
-def print_grid(grid, output_stream, generations, total_cell_updates):
-
-    gen_grid_string = ""
-    for row in grid:
-        gen_row_string = "\n"
-        for cell in row:
-            if cell == 1:
-                gen_row_string += Fore.GREEN + chr(0x25A0)
-            else:
-                gen_row_string += Fore.RED + chr(0x25A1)
-            gen_row_string += " "
-
-        gen_grid_string += gen_row_string
-
-    output_string = gen_grid_string + Style.RESET_ALL + \
-        " \nGeneration: " + str(generations) + \
-        " Cell updates: " + str(total_cell_updates) + "\n"
-    clear()
-    output_stream.write(output_string)
-    output_stream.flush()
-
-
-def print_cursor(grid, rows, cols, cursor, output_stream):
-
-    gen_grid_string = ""
-    for row in range(0, rows):
-        gen_row_string = "\n"
-        for col in range(0, cols):
-
-            if row == cursor[0] and col == cursor[1]:
-                gen_row_string += Fore.MAGENTA + chr(0x25A0)
-            elif grid[row][col] == 1:
-                gen_row_string += Fore.GREEN + chr(0x25A0)
-            else:
-                gen_row_string += Fore.RED + chr(0x25A1)
-            gen_row_string += " "
-
-        gen_grid_string += gen_row_string
-
-    clear()
-    output_string = gen_grid_string + Style.RESET_ALL + "\n"
-    output_stream.write(output_string)
-    output_stream.flush()

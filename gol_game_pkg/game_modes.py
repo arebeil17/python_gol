@@ -1,17 +1,19 @@
 import time
-import grid
-from game_constants import GRID_MOVES_DICT as grid_moves
-from game_constants import USER_INPUT_TO_MOVE_DICT as input_to_move
-from game_types import GameState
+from math import floor
+import gol_game_pkg.grid as grid
+import gol_game_pkg.display as display
+from gol_game_pkg.game_constants import GRID_MOVES_DICT as grid_moves
+from gol_game_pkg.game_constants import USER_INPUT_TO_MOVE_DICT as input_to_move
+from gol_game_pkg.game_types import GameState
 
 
 def cursor_mode(game_grid, rows, cols, output_stream):
 
-    cursor = [0, 0]  # cursor list [x, y]
-    grid.clear()
+    cursor = [int(rows / 2), int(cols / 2)]  # cursor list [x, y]
+    display.clear()
     print("Initial state of grid:")
 
-    grid.print_grid(game_grid, output_stream, 0, 0)
+    display.print_cursor(game_grid, rows, cols, cursor, output_stream)
 
     while(True):
         user_input = ""
@@ -43,23 +45,27 @@ def cursor_mode(game_grid, rows, cols, output_stream):
 
         cursor = [cursor[0] + move[0], cursor[1] + move[1]]
 
-        grid.print_cursor(game_grid, rows, cols, cursor, output_stream)
+        display.print_cursor(game_grid, rows, cols, cursor, output_stream)
 
     return game_grid
 
 
-def simulate_mode(game_grid, rows, cols, auto, output_stream):
+def simulate_mode(game_grid, rows, cols, auto, color_mode, output_stream):
+
     generations = 0
-    num_cell_updates = 0
-    total_cell_updates = 0
     prev_cell_updates = 0
 
-    grid.clear()
+    display.clear()
     print("Initial state of grid:")
 
-    grid.print_grid(game_grid, output_stream, 0, 0)
-
     state = GameState(game_grid, 0)
+
+    if color_mode == "1":
+        display.print_grid(state.game_grid, output_stream,
+                           generations, state.updates)
+    elif color_mode == "2":
+        display.print_disco_grid(state.game_grid, output_stream,
+                                 generations, state.updates)
 
     update_delta = 0
     stale_delta = 0
@@ -76,8 +82,12 @@ def simulate_mode(game_grid, rows, cols, auto, output_stream):
 
         generations += 1
 
-        grid.print_grid(state.game_grid, output_stream,
-                        generations, state.updates)
+        if color_mode == "1":
+            display.print_grid(state.game_grid, output_stream,
+                               generations, state.updates)
+        elif color_mode == "2":
+            display.print_disco_grid(state.game_grid, output_stream,
+                                     generations, state.updates)
 
         if prev_cell_updates == state.updates:
             print("\nGrowth has ended at generation:", generations,
