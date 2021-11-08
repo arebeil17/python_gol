@@ -8,6 +8,16 @@ def boundary_check(rows, cols, row, col):
     return (row in range(0, rows) and col in range(0, cols))
 
 
+def initialize_grid_from_window_size(cell_dim, window_dim):
+
+    rows = int(window_dim[1] / cell_dim[1])
+    cols = int(window_dim[0] / cell_dim[0])
+
+    game_grid = make_grid(rows, cols)
+
+    return game_grid
+
+
 def compute_alive_adj_cells(rows, cols, current_row, current_col, grid):
     adj_live_cells = 0
     for move in grid_moves.values():
