@@ -21,7 +21,8 @@ RGB_COLOR_DICT = {"ORANGE": (245, 100, 32),
 
 class CellColor(enum.Enum):
     Default = 0
-    Disco = 1
+    Colorful = 1
+    Disco = 2
 
 
 class InitMode(enum.Enum):
