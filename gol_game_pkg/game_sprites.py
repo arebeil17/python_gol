@@ -1,8 +1,11 @@
 import pygame
 from pygame import Color, Surface
+from pygame.locals import *
 import random
 from gol_game_pkg.game_constants import RGB_COLOR_DICT as rgb_dict
 from gol_game_pkg.game_constants import CellColor
+import gol_game_pkg.grid as grid
+from gol_game_pkg.game_types import GameConfig, GameState2D
 
 
 class CellSprite(pygame.sprite.Sprite):
@@ -48,3 +51,43 @@ def initiaize_grid_sprites(game_config, game_state):
             game_state.all_sprites.add(cell)
             # key = "x,y" and val = CellSprite object
             game_state.sprite_map[f'{x},{y}'] = cell
+
+
+def dynamic_grid_sprite_update(game_config, game_state, cell_dim, window_dim):
+
+    game_grid = grid.initialize_grid_from_window_size(cell_dim, window_dim)
+
+    rows = len(game_grid)
+    cols = len(game_grid[0])
+    grid_dim = [cols, rows]
+
+    game_state.all_sprites.empty()
+
+    game_state = GameState2D(
+        game_grid, 0, game_state.fps, game_state.display_surface, game_state.all_sprites, {})
+
+    game_config = GameConfig(
+        cell_dim, grid_dim, window_dim, game_config.color_mode)
+
+    game_state.game_grid = grid.randomize_grid(game_state.game_grid, rows)
+
+    initiaize_grid_sprites(game_config, game_state)
+
+
+def reinitialize_grid_sprites_to_dead(game_config, game_state, cell_dim, window_dim):
+
+    game_grid = grid.initialize_grid_from_window_size(cell_dim, window_dim)
+
+    rows = len(game_grid)
+    cols = len(game_grid[0])
+    grid_dim = [cols, rows]
+
+    game_state = GameState2D(
+        game_grid, 0, game_state.fps, game_state.display_surface, game_state.all_sprites, game_state.sprite_map)
+
+    game_config = GameConfig(
+        cell_dim, grid_dim, window_dim, game_config.color_mode)
+
+    initiaize_grid_sprites(game_config, game_state)
+
+    return game_state
