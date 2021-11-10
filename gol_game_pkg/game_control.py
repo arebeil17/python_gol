@@ -8,9 +8,10 @@ import random
 import gol_game_pkg.game_modes as game_modes
 import gol_game_pkg.grid as grid
 import gol_game_pkg.display as display
-from gol_game_pkg.game_constants import RGB_COLOR_DICT as rgb_dict
+from gol_game_pkg.game_constants import RGB_COLOR_DICT as rgb_dict, CellColor
 from gol_game_pkg.game_types import GameState2D, GameConfig
 from gol_game_pkg.game_sprites import CellSprite
+
 
 # HEIGHT = 600
 # WIDTH = 1000
@@ -67,20 +68,25 @@ def cursor_mode_2d(game_config, game_state):
                 exit_cursor_mode = True
                 continue
 
-        for y in range(0, game_config.window_dim[1], game_config.cell_dim[1]):
-            for x in range(0, game_config.window_dim[0], game_config.cell_dim[0]):
-                row = int(y / game_config.cell_dim[0])
-                col = int(x / game_config.cell_dim[1])
-
-                sprite_key = f'{x},{y}'
-                if sprite_key in game_state.sprite_map:
-                    cell_sprite = game_state.sprite_map[sprite_key]
-                    if mouse_up_detected and cell_sprite.is_clicked():
-                        print("Detected clicked sprite at: ", x, ",", y)
-                        game_state.game_grid[row][col] = not game_state.game_grid[row][col]
-
+            for y in range(0, game_config.window_dim[1], game_config.cell_dim[1]):
+                for x in range(0, game_config.window_dim[0], game_config.cell_dim[0]):
+                    row = int(y / game_config.cell_dim[0])
+                    col = int(x / game_config.cell_dim[1])
                     is_alive = game_state.game_grid[row][col]
-                    cell_sprite.update_cell(is_alive, game_config.color_mode)
+                    sprite_key = f'{x},{y}'
+                    if sprite_key in game_state.sprite_map:
+                        cell_sprite = game_state.sprite_map[sprite_key]
+                        if mouse_up_detected and cell_sprite.is_clicked():
+                            print("Detected clicked sprite at: ", x, ",", y)
+                            game_state.game_grid[row][col] = not game_state.game_grid[row][col]
+                            is_alive = game_state.game_grid[row][col]
+                            print("cell alive: ", is_alive)
+                            cell_sprite.update_cell(
+                                is_alive, game_config.color_mode)
+
+                        if CellColor(game_config.color_mode) == CellColor.Disco:
+                            cell_sprite.update_cell(
+                                is_alive, game_config.color_mode)
 
         game_state.all_sprites.update()
         game_state.display_surface.fill((0, 0, 0))
