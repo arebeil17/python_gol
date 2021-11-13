@@ -1,1 +1,3 @@
 *.pyc
+gol_game_pkg/__pycache__/
+gol_game_pkg/__pycache__/*
