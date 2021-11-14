@@ -33,20 +33,18 @@ def compute_alive_adj_cells(rows, cols, current_row, current_col, grid):
 
 def evaluate_grid(state, rows, cols):
     updated_grid = copy_grid(state.game_grid, rows, cols)
-    DEAD = 0
-    ALIVE = 1
     num_updates = 0
     for row in range(0, rows):
         for col in range(0, cols):
             num_adj_alive = compute_alive_adj_cells(
                 rows, cols, row, col, state.game_grid)
 
-            if state.game_grid[row][col] == ALIVE:
+            if state.game_grid[row][col] == 1:
                 # Cell dies if under/over-population conditon is true
                 if num_adj_alive < 2 or num_adj_alive > 3:
                     updated_grid[row][col] = 0  # Death of cell
                     num_updates += 1
-            elif state.game_grid[row][col] == DEAD and num_adj_alive == 3:
+            elif state.game_grid[row][col] == 0 and num_adj_alive == 3:
                 updated_grid[row][col] = 1  # Reproduction
                 num_updates += 1
 

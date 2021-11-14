@@ -7,10 +7,9 @@ class GameState:
         self.updates = updates
 
 
-class GameState2D:
+class GameState2D(GameState):
     def __init__(self, game_grid, updates, fps, display_surface, all_sprites, sprite_map):
-        self.game_grid = game_grid
-        self.updates = updates
+        super().__init__(game_grid, updates)
         self.fps = fps
         self.display_surface = display_surface
         self.all_sprites = all_sprites

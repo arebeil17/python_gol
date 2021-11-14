@@ -8,7 +8,7 @@ import random
 import gol_game_pkg.game_modes as game_modes
 import gol_game_pkg.grid as grid
 import gol_game_pkg.display as display
-from gol_game_pkg.game_constants import RGB_COLOR_DICT as rgb_dict, CellColor
+from gol_game_pkg.game_constants import CellColor
 from gol_game_pkg.game_types import GameState2D, GameConfig
 from gol_game_pkg.game_sprites import CellSprite
 
@@ -55,6 +55,9 @@ def cursor_mode_2d(game_config, game_state):
 
     cursor_mode_fps = 30
     exit_cursor_mode = False
+    for entity in game_state.all_sprites:
+        game_state.display_surface.blit(entity.outline_surf,
+                                        entity.outline_rect)
     while not exit_cursor_mode:
         mouse_up_detected = False
         for event in pygame.event.get():
@@ -68,31 +71,34 @@ def cursor_mode_2d(game_config, game_state):
                 exit_cursor_mode = True
                 continue
 
-            for y in range(0, game_config.window_dim[1], game_config.cell_dim[1]):
-                for x in range(0, game_config.window_dim[0], game_config.cell_dim[0]):
-                    row = int(y / game_config.cell_dim[0])
-                    col = int(x / game_config.cell_dim[1])
-                    is_alive = game_state.game_grid[row][col]
-                    sprite_key = f'{x},{y}'
-                    if sprite_key in game_state.sprite_map:
-                        cell_sprite = game_state.sprite_map[sprite_key]
-                        if mouse_up_detected and cell_sprite.is_clicked():
-                            print("Detected clicked sprite at: ", x, ",", y)
-                            game_state.game_grid[row][col] = not game_state.game_grid[row][col]
-                            is_alive = game_state.game_grid[row][col]
-                            print("cell alive: ", is_alive)
-                            cell_sprite.update_cell(
-                                is_alive, game_config.color_mode)
+        for y in range(0, game_config.window_dim[1], game_config.cell_dim[1]):
+            for x in range(0, game_config.window_dim[0], game_config.cell_dim[0]):
+                row = int(y / game_config.cell_dim[0])
+                col = int(x / game_config.cell_dim[1])
+                is_alive = game_state.game_grid[row][col]
+                sprite_key = f'{x},{y}'
+                if sprite_key in game_state.sprite_map:
+                    cell_sprite = game_state.sprite_map[sprite_key]
+                    if mouse_up_detected and cell_sprite.is_clicked():
+                        print("Detected clicked sprite at: ", x, ",", y)
+                        game_state.game_grid[row][col] = not game_state.game_grid[row][col]
+                        is_alive = game_state.game_grid[row][col]
+                        print("cell alive: ", is_alive)
+                        cell_sprite.update_cell(
+                            is_alive, game_config.color_mode)
 
-                        if CellColor(game_config.color_mode) == CellColor.Disco:
-                            cell_sprite.update_cell(
-                                is_alive, game_config.color_mode)
+                if CellColor(game_config.color_mode) == CellColor.Disco:
+                    cell_sprite.update_cell(
+                        is_alive, game_config.color_mode)
 
         game_state.all_sprites.update()
         game_state.display_surface.fill((0, 0, 0))
 
         for entity in game_state.all_sprites:
-            game_state.display_surface.blit(entity.surf, entity.rect)
+            # game_state.display_surface.blit(entity.outline_surf,
+            #                                 entity.outline_rect)
+            game_state.display_surface.blit(entity.cell_surf,
+                                            entity.cell_rect)
 
         pygame.display.flip()
 
@@ -103,6 +109,9 @@ def simualtion_mode_2d(game_config, game_state):
 
     simulation_paused = False
     generations = 0
+    for entity in game_state.all_sprites:
+        game_state.display_surface.blit(entity.outline_surf,
+                                        entity.outline_rect)
     while True:
         info_string = f'Generation: {generations} Updates: {game_state.updates}'
         text, text_rect = create_text_bar(game_config.window_dim, info_string)
@@ -133,7 +142,10 @@ def simualtion_mode_2d(game_config, game_state):
             game_state.display_surface.fill((0, 0, 0))
 
             for entity in game_state.all_sprites:
-                game_state.display_surface.blit(entity.surf, entity.rect)
+                # game_state.display_surface.blit(entity.outline_surf,
+                #                                 entity.outline_rect)
+                game_state.display_surface.blit(entity.cell_surf,
+                                                entity.cell_rect)
 
             game_state.display_surface.blit(text, text_rect)
 

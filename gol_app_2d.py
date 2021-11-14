@@ -46,8 +46,6 @@ manager = pygame_gui.UIManager((window_dim[0], window_dim[1]), 'menu.json')
 
 background = pygame.Surface((window_dim[0], window_dim[1]))
 
-# background.fill(pygame.Color('#5F9EA0'))
-
 start_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((window_dim[0] // 2 - 100,
                                             window_dim[1] // 2), (200, 50)),
                                             text='Start Simulation',
@@ -156,8 +154,11 @@ while is_running:
     game_state.all_sprites.update()
     game_state.display_surface.fill((0, 0, 0))
 
-    for entity in game_state.all_sprites:
-        game_state.display_surface.blit(entity.surf, entity.rect)
+    for entity in game_state.all_sprites:  # TODO: Make this a function
+        game_state.display_surface.blit(entity.outline_surf,
+                                        entity.outline_rect)
+        game_state.display_surface.blit(entity.cell_surf,
+                                        entity.cell_rect)
 
     manager.draw_ui(game_state.display_surface)
     game_state.display_surface.blit(text, text_rect)

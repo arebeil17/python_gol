@@ -2,7 +2,7 @@ import pygame
 from pygame import Color, Surface
 from pygame.locals import *
 import random
-from gol_game_pkg.game_constants import RGB_COLOR_DICT as rgb_dict
+from gol_game_pkg.game_constants import CELL_COLORS, GAME_COLORS
 from gol_game_pkg.game_constants import CellColor
 import gol_game_pkg.grid as grid
 from gol_game_pkg.game_types import GameConfig, GameState2D
@@ -11,32 +11,37 @@ from gol_game_pkg.game_types import GameConfig, GameState2D
 class CellSprite(pygame.sprite.Sprite):
     def __init__(self,  pos, cell_dim, is_alive, color_mode):
         super().__init__()
-        self.surf = pygame.Surface((cell_dim[0], cell_dim[1]))
-        self.random_color = random.choice(list(rgb_dict.values()))
+        grid_line_dim = 1
+        self.outline_surf = pygame.Surface((cell_dim[0], cell_dim[1]))
+        self.outline_surf.fill(GAME_COLORS["BLACK"])
+        self.cell_surf = pygame.Surface(
+            (cell_dim[0] - grid_line_dim, cell_dim[1] - grid_line_dim))
+        self.random_color = random.choice(list(CELL_COLORS.values()))
         if is_alive:
             if CellColor(color_mode) == CellColor.Disco or CellColor(color_mode) == CellColor.Colorful:
-                self.surf.fill(self.random_color)
+                self.cell_surf.fill(self.random_color)
             else:
-                self.surf.fill((128, 255, 40))  # RGB - GREEN
+                self.cell_surf.fill(GAME_COLORS["MATRIX_GREEN"])
         else:
-            self.surf.fill((10, 10, 10))
+            self.cell_surf.fill(GAME_COLORS["GRAY"])
 
-        self.rect = self.surf.get_rect(center=(pos[0], pos[1]))
+        self.outline_rect = self.outline_surf.get_rect(center=(pos[0], pos[1]))
+        self.cell_rect = self.cell_surf.get_rect(center=(pos[0], pos[1]))
 
     def update_cell(self, is_alive, color_mode):
         if is_alive:
             if CellColor(color_mode) == CellColor.Disco:
-                random_color = random.choice(list(rgb_dict.values()))
-                self.surf.fill(random_color)
+                random_color = random.choice(list(CELL_COLORS.values()))
+                self.cell_surf.fill(random_color)
             elif CellColor(color_mode) == CellColor.Colorful:
-                self.surf.fill(self.random_color)
+                self.cell_surf.fill(self.random_color)
             else:
-                self.surf.fill((128, 255, 40))  # RGB - GREEN
+                self.cell_surf.fill(GAME_COLORS["MATRIX_GREEN"])
         else:
-            self.surf.fill((10, 10, 10))
+            self.cell_surf.fill(GAME_COLORS["GRAY"])
 
     def is_clicked(self):
-        return pygame.mouse.get_pressed()[0] and self.rect.collidepoint(pygame.mouse.get_pos())
+        return pygame.mouse.get_pressed()[0] and self.cell_rect.collidepoint(pygame.mouse.get_pos())
 
 
 def initiaize_grid_sprites(game_config, game_state):
