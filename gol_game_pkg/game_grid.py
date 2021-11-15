@@ -62,6 +62,11 @@ class GameGrid:
                 row[random_index] = 1
                 num_live -= 1
 
+    def reinitialize_to_all_dead(self):
+        for row in range(0, self.rows):
+            for col in range(0, self.cols):
+                self.grid[row][col] = 0
+
 
 class WindowGrid(GameGrid):
     def __init__(self, cell_dim, window_dim):

@@ -119,6 +119,8 @@ while is_running:
                     board_init_mode = InitMode.Cursor
                     print('configure mode')
                     is_running = False
+                    game_sprites.reset_all_sprites_to_dead(
+                        game_state, game_config)
 
                 if event.ui_element == speed_button:
                     fps_setting = (fps_setting + 1) % num_speeds
@@ -150,14 +152,12 @@ while is_running:
     manager.update(time_delta)
 
     if setting_update:
-        updated_objects = game_sprites.dynamic_grid_sprite_update(
+        game_sprites.dynamic_grid_sprite_update(
             game_config, game_state, cell_dim, window_dim)
-        game_config = updated_objects["game_config"]
-        game_state = updated_objects["game_state"]
-        # print("cell_dim:", game_config.cell_dim,
-        #       "window_dim:", game_config.window_dim)
-        # print("rows:", str(game_state.window_grid.rows),
-        #       "cols:", str(game_state.window_grid.cols))
+        print("cell_dim:", game_config.cell_dim,
+              "window_dim:", game_config.window_dim)
+        print("rows:", str(game_state.window_grid.rows),
+              "cols:", str(game_state.window_grid.cols))
 
     game_state.display_surface.blit(background, (0, 0))
 
@@ -187,21 +187,21 @@ while is_running:
 
 # game_config = GameConfig(
 #     cell_dim, grid_dim, window_dim, game_config.color_mode)
-window_grid = WindowGrid(cell_dim, window_dim)
+# window_grid = WindowGrid(cell_dim, window_dim)
 
-grid_dim = [window_grid.cols, window_grid.rows]
+# grid_dim = [window_grid.cols, window_grid.rows]
 
-game_state = GameState2D(
-    window_grid, 0, FPS, display_surface, all_sprites, sprite_map)
+# game_state = GameState2D(
+#     window_grid, 0, FPS, display_surface, all_sprites, sprite_map)
 
-game_config = GameConfig(cell_dim, window_dim, cell_color_mode)
+# game_config = GameConfig(cell_dim, window_dim, cell_color_mode)
 
-game_sprites.initiaize_grid_sprites(game_config, game_state)
+# game_sprites.initiaize_grid_sprites(game_config, game_state)
 
 
-# if InitMode(board_init_mode) == InitMode.Random:
-#     game_state.window_grid.grid = window_grid.randomize_grid()
-# else:
-#     game_control.cursor_mode_2d(game_config, game_state)
+if InitMode(board_init_mode) == InitMode.Random:
+    game_state.window_grid.grid = window_grid.randomize_grid()
+else:
+    game_control.cursor_mode_2d(game_config, game_state)
 
-# game_control.simualtion_mode_2d(game_config, game_state)
+game_control.simualtion_mode_2d(game_config, game_state)

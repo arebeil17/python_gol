@@ -75,14 +75,14 @@ def cursor_mode_2d(game_config, game_state):
             for x in range(0, game_config.window_dim[0], game_config.cell_dim[0]):
                 row = int(y / game_config.cell_dim[0])
                 col = int(x / game_config.cell_dim[1])
-                is_alive = game_state.game_grid[row][col]
+                is_alive = game_state.window_grid.grid[row][col]
                 sprite_key = f'{x},{y}'
                 if sprite_key in game_state.sprite_map:
                     cell_sprite = game_state.sprite_map[sprite_key]
                     if mouse_up_detected and cell_sprite.is_clicked():
                         print("Detected clicked sprite at: ", x, ",", y)
-                        game_state.game_grid[row][col] = not game_state.game_grid[row][col]
-                        is_alive = game_state.game_grid[row][col]
+                        game_state.window_grid.grid[row][col] = not game_state.window_grid.grid[row][col]
+                        is_alive = game_state.window_grid.grid[row][col]
                         print("cell alive: ", is_alive)
                         cell_sprite.update_cell(
                             is_alive, game_config.color_mode)
@@ -134,7 +134,7 @@ def simualtion_mode_2d(game_config, game_state):
                     sprite_key = f'{x},{y}'
                     if sprite_key in game_state.sprite_map:
                         cell_sprite = game_state.sprite_map[sprite_key]
-                        is_alive = game_state.game_grid[row][col]
+                        is_alive = game_state.window_grid.grid[row][col]
                         cell_sprite.update_cell(
                             is_alive, game_config.color_mode)
 
@@ -149,8 +149,10 @@ def simualtion_mode_2d(game_config, game_state):
 
             game_state.display_surface.blit(text, text_rect)
 
-            game_state = grid.evaluate_grid(
-                game_state, game_config.grid_dim[1], game_config.grid_dim[0])
+            # game_state = grid.evaluate_grid(
+            #     game_state, game_config.grid_dim[1], game_config.grid_dim[0])
+            updates = game_state.window_grid.evaluate_grid()
+            game_state.updates += updates
 
             generations += 1
 

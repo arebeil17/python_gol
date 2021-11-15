@@ -68,27 +68,35 @@ def dynamic_grid_sprite_update(game_config, game_state, cell_dim, window_dim):
 
     game_state.all_sprites.empty()
 
-    game_state = GameState2D(
-        window_grid, 0, game_state.fps, game_state.display_surface, game_state.all_sprites, {})
+    # game_state = GameState2D(
+    #     window_grid, 0, game_state.fps, game_state.display_surface, game_state.all_sprites, {})
 
-    game_config = GameConfig(cell_dim, window_dim, game_config.color_mode)
+    # game_config = GameConfig(cell_dim, window_dim, game_config.color_mode)
+
+    game_state.update(window_grid, 0, game_state.fps,
+                      game_state.display_surface, game_state.all_sprites, {})
+
+    game_config.update(cell_dim, window_dim, game_config.color_mode)
 
     game_state.window_grid.randomize_grid()
 
     initiaize_grid_sprites(game_config, game_state)
 
-    return {"game_config": game_config, "game_state": game_state}
+    # return {"game_config": game_config, "game_state": game_state}
 
 
-def reinitialize_grid_sprites_to_dead(game_config, game_state, cell_dim, window_dim):
+def reset_all_sprites_to_dead(game_state, game_config):
 
-    window_grid = WindowGrid(cell_dim, window_dim)
+    game_state.window_grid.reinitialize_to_all_dead()
 
-    game_state = GameState2D(
-        window_grid, 0, game_state.fps, game_state.display_surface, game_state.all_sprites, game_state.sprite_map)
+    for y in range(0, game_config.window_dim[1], game_config.cell_dim[1]):
+        for x in range(0, game_config.window_dim[0], game_config.cell_dim[0]):
+            row = int(y / game_config.cell_dim[0])
+            col = int(x / game_config.cell_dim[1])
 
-    game_config = GameConfig(cell_dim, window_dim, game_config.color_mode)
-
-    initiaize_grid_sprites(game_config, game_state)
-
-    return game_state
+            sprite_key = f'{x},{y}'
+            if sprite_key in game_state.sprite_map:
+                cell_sprite = game_state.sprite_map[sprite_key]
+                is_alive = game_state.window_grid.grid[row][col]
+                cell_sprite.update_cell(
+                    is_alive, game_config.color_mode)
