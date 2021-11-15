@@ -28,10 +28,6 @@ sprite_map = dict()
 
 window_grid = WindowGrid(cell_dim, window_dim)
 
-#game_grid = grid.initialize_grid_from_window_size(cell_dim, window_dim)
-
-# rows = len(game_grid)
-# cols = len(game_grid[0])
 grid_dim = [window_grid.cols, window_grid.rows]
 
 game_state = GameState2D(
@@ -174,30 +170,6 @@ while is_running:
     pygame.display.update()
 
 # ---------------------------------------------------------
-
-
-# game_grid = grid.initialize_grid_from_window_size(cell_dim, window_dim)
-
-# rows = len(game_grid)
-# cols = len(game_grid[0])
-# grid_dim = [cols, rows]
-
-# game_state = GameState2D(
-#     game_grid, 0, game_state.fps, display_surface, all_sprites, sprite_map)
-
-# game_config = GameConfig(
-#     cell_dim, grid_dim, window_dim, game_config.color_mode)
-# window_grid = WindowGrid(cell_dim, window_dim)
-
-# grid_dim = [window_grid.cols, window_grid.rows]
-
-# game_state = GameState2D(
-#     window_grid, 0, FPS, display_surface, all_sprites, sprite_map)
-
-# game_config = GameConfig(cell_dim, window_dim, cell_color_mode)
-
-# game_sprites.initiaize_grid_sprites(game_config, game_state)
-
 
 if InitMode(board_init_mode) == InitMode.Random:
     game_state.window_grid.grid = window_grid.randomize_grid()
