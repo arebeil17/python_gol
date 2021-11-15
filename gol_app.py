@@ -4,10 +4,9 @@ import pygame
 import pygame_gui
 from pygame import Color, Surface
 from pygame.locals import *
-import time
 import sys
-import random
-import gol_game_pkg.grid as grid
+# import gol_game_pkg.grid as grid # TODO: REMOVE! Deprecated!
+from gol_game_pkg.game_grid import WindowGrid
 import gol_game_pkg.game_sprites as game_sprites
 from gol_game_pkg.game_types import GameConfig, GameState2D
 
@@ -25,20 +24,22 @@ display_surface = pygame.display.set_mode((window_dim[0], window_dim[1]))
 pygame.display.set_caption("Conway's Game of Life")
 
 all_sprites = pygame.sprite.Group()
-sprite_map = {}
+sprite_map = dict()
 
-game_grid = grid.initialize_grid_from_window_size(cell_dim, window_dim)
+window_grid = WindowGrid(cell_dim, window_dim)
 
-rows = len(game_grid)
-cols = len(game_grid[0])
-grid_dim = [cols, rows]
+#game_grid = grid.initialize_grid_from_window_size(cell_dim, window_dim)
+
+# rows = len(game_grid)
+# cols = len(game_grid[0])
+grid_dim = [window_grid.cols, window_grid.rows]
 
 game_state = GameState2D(
-    game_grid, 0, FPS, display_surface, all_sprites, sprite_map)
+    window_grid, 0, FPS, display_surface, all_sprites, sprite_map)
 
-game_config = GameConfig(cell_dim, grid_dim, window_dim, cell_color_mode)
+game_config = GameConfig(cell_dim, window_dim, cell_color_mode)
 
-game_state.game_grid = grid.randomize_grid(game_state.game_grid, rows)
+game_state.window_grid.randomize_grid()
 
 game_sprites.initiaize_grid_sprites(game_config, game_state)
 # ---------------------------------------------------------
@@ -88,6 +89,9 @@ color_button = pygame_gui.elements.UIButton(color_rect, text=f'Color: {color_lis
 clock = pygame.time.Clock()
 is_running = True
 
+for entity in game_state.all_sprites:
+    game_state.display_surface.blit(entity.outline_surf,
+                                    entity.outline_rect)
 while is_running:
 
     text, text_rect = game_control.create_menu_text_bar(window_dim)
@@ -146,17 +150,21 @@ while is_running:
     manager.update(time_delta)
 
     if setting_update:
-        game_sprites.dynamic_grid_sprite_update(
+        updated_objects = game_sprites.dynamic_grid_sprite_update(
             game_config, game_state, cell_dim, window_dim)
+        game_config = updated_objects["game_config"]
+        game_state = updated_objects["game_state"]
+        # print("cell_dim:", game_config.cell_dim,
+        #       "window_dim:", game_config.window_dim)
+        # print("rows:", str(game_state.window_grid.rows),
+        #       "cols:", str(game_state.window_grid.cols))
 
     game_state.display_surface.blit(background, (0, 0))
 
     game_state.all_sprites.update()
     game_state.display_surface.fill((0, 0, 0))
 
-    for entity in game_state.all_sprites:  # TODO: Make this a function
-        game_state.display_surface.blit(entity.outline_surf,
-                                        entity.outline_rect)
+    for entity in game_state.all_sprites:
         game_state.display_surface.blit(entity.cell_surf,
                                         entity.cell_rect)
 
@@ -168,24 +176,32 @@ while is_running:
 # ---------------------------------------------------------
 
 
-game_grid = grid.initialize_grid_from_window_size(cell_dim, window_dim)
+# game_grid = grid.initialize_grid_from_window_size(cell_dim, window_dim)
 
-rows = len(game_grid)
-cols = len(game_grid[0])
-grid_dim = [cols, rows]
+# rows = len(game_grid)
+# cols = len(game_grid[0])
+# grid_dim = [cols, rows]
+
+# game_state = GameState2D(
+#     game_grid, 0, game_state.fps, display_surface, all_sprites, sprite_map)
+
+# game_config = GameConfig(
+#     cell_dim, grid_dim, window_dim, game_config.color_mode)
+window_grid = WindowGrid(cell_dim, window_dim)
+
+grid_dim = [window_grid.cols, window_grid.rows]
 
 game_state = GameState2D(
-    game_grid, 0, game_state.fps, display_surface, all_sprites, sprite_map)
+    window_grid, 0, FPS, display_surface, all_sprites, sprite_map)
 
-game_config = GameConfig(
-    cell_dim, grid_dim, window_dim, game_config.color_mode)
+game_config = GameConfig(cell_dim, window_dim, cell_color_mode)
 
 game_sprites.initiaize_grid_sprites(game_config, game_state)
 
 
-if InitMode(board_init_mode) == InitMode.Random:
-    game_state.game_grid = grid.randomize_grid(game_state.game_grid, rows)
-else:
-    game_control.cursor_mode_2d(game_config, game_state)
+# if InitMode(board_init_mode) == InitMode.Random:
+#     game_state.window_grid.grid = window_grid.randomize_grid()
+# else:
+#     game_control.cursor_mode_2d(game_config, game_state)
 
-game_control.simualtion_mode_2d(game_config, game_state)
+# game_control.simualtion_mode_2d(game_config, game_state)

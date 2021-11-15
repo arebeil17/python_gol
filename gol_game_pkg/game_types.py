@@ -1,4 +1,5 @@
 import pygame
+import gol_game_pkg.game_grid
 
 
 class GameState:
@@ -8,8 +9,9 @@ class GameState:
 
 
 class GameState2D(GameState):
-    def __init__(self, game_grid, updates, fps, display_surface, all_sprites, sprite_map):
-        super().__init__(game_grid, updates)
+    def __init__(self, window_grid, updates, fps, display_surface, all_sprites, sprite_map):
+        self.window_grid = window_grid
+        self.updates = updates
         self.fps = fps
         self.display_surface = display_surface
         self.all_sprites = all_sprites
@@ -17,8 +19,7 @@ class GameState2D(GameState):
 
 
 class GameConfig:
-    def __init__(self, cell_dim, grid_dim, window_dim, color_mode):
+    def __init__(self, cell_dim, window_dim, color_mode):
         self.cell_dim = cell_dim
-        self.grid_dim = grid_dim
         self.window_dim = window_dim
         self.color_mode = color_mode
