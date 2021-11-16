@@ -1,5 +1,5 @@
 import gol_game_pkg.game_control as game_control
-from gol_game_pkg.game_constants import InitMode, CellColor
+from gol_game_pkg.game_constants import GameMode, CellColor
 import pygame
 import pygame_gui
 from pygame import Color, Surface
@@ -12,7 +12,6 @@ from gol_game_pkg.game_types import GameConfig, GameState2D
 
 cell_dim = [20, 20]
 window_dim = [1200, 800]
-board_init_mode = InitMode.Random
 cell_color_mode = CellColor.Colorful
 FPS = 2
 
@@ -45,13 +44,11 @@ background = pygame.Surface((window_dim[0], window_dim[1]))
 
 start_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((window_dim[0] // 2 - 100,
                                             window_dim[1] // 2), (200, 50)),
-                                            text='Start Simulation',
+                                            text='Start',
                                             manager=manager)
 
-configure_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((window_dim[0] // 2 - 100,
-                                                window_dim[1] // 2 + 50), (200, 50)),
-                                                text='Configure Mode',
-                                                manager=manager)
+mode_rect = pygame.Rect((window_dim[0] // 2 - 100,
+                         window_dim[1] // 2 + 50), (200, 50))
 
 speed_rect = pygame.Rect((window_dim[0] // 2 - 100,
                           window_dim[1] // 2 + 100), (200, 50))
@@ -62,16 +59,24 @@ scale_rect = pygame.Rect((window_dim[0] // 2 - 100,
 color_rect = pygame.Rect((window_dim[0] // 2 - 100,
                           window_dim[1] // 2 + 200), (200, 50))
 
+mode_setting = 0
 fps_setting = 1
 scale_setting = 2
 color_setting = 1
+
+mode_list = [["random start", 0], ["custom start", 1]]
 fps_list = [["slow", 1], ["normal", 2], ["fast", 5], ["ultra", 10]]
 scale_list = [["micro", 5, 5], ["small", 10, 10], [
     "normal", 20, 20], ["large", 40, 40], ["Collosal", 80, 80]]
 color_list = [["green", 0], ["colorful", 1], ["disco", 2]]
+
+num_modes = len(mode_list)
 num_speeds = len(fps_list)
 num_scales = len(scale_list)
 num_colors = len(color_list)
+
+mode_button = pygame_gui.elements.UIButton(mode_rect, text=f'Game Mode: {mode_list[mode_setting][0]}',
+                                           manager=manager)
 
 speed_button = pygame_gui.elements.UIButton(speed_rect, text=f'Sim Speed: {fps_list[fps_setting][0]}',
                                             manager=manager)
@@ -108,15 +113,13 @@ while is_running:
 
                 if event.ui_element == start_button:
                     print('start simulation')
-                    board_init_mode = InitMode.Random
                     is_running = False
 
-                if event.ui_element == configure_button:
-                    board_init_mode = InitMode.Cursor
-                    print('configure mode')
-                    is_running = False
-                    game_sprites.reset_all_sprites_to_dead(
-                        game_state, game_config)
+                if event.ui_element == mode_button:
+                    mode_setting = (mode_setting + 1) % num_modes
+                    pygame_gui.elements.UIButton(mode_rect, text=f'Game Mode: {mode_list[mode_setting][0]}',
+                                                 manager=manager)
+                    print('updated mode', mode_list[mode_setting][0])
 
                 if event.ui_element == speed_button:
                     fps_setting = (fps_setting + 1) % num_speeds
@@ -171,9 +174,9 @@ while is_running:
 
 # ---------------------------------------------------------
 
-if InitMode(board_init_mode) == InitMode.Random:
-    game_state.window_grid.grid = window_grid.randomize_grid()
-else:
+if GameMode(mode_setting) == GameMode.Cursor:
+    game_sprites.reset_all_sprites_to_dead(
+        game_state, game_config)
     game_control.cursor_mode_2d(game_config, game_state)
 
 game_control.simualtion_mode_2d(game_config, game_state)

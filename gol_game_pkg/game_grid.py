@@ -1,3 +1,4 @@
+from types import NoneType
 from gol_game_pkg.game_constants import GRID_MOVES_DICT as grid_moves
 import random
 
@@ -82,4 +83,4 @@ class WindowGrid(GameGrid):
         self.rows = int(self.window_dim[1] / self.cell_dim[1])
         self.cols = int(self.window_dim[0] / self.cell_dim[0])
 
-        self.grid = super().make_grid()
+        self.grid = self.make_grid()

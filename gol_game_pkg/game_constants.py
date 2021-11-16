@@ -37,6 +37,6 @@ class CellColor(enum.Enum):
     Disco = 2
 
 
-class InitMode(enum.Enum):
-    Cursor = 0
-    Random = 1
+class GameMode(enum.Enum):
+    Random = 0
+    Cursor = 1

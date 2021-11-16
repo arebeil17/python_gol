@@ -25,6 +25,22 @@ class GameState2D(GameState):
         self.all_sprites = all_sprites
         self.sprite_map = sprite_map
 
+    def update_all_cell_sprites(self, game_config):
+        for y in range(0, game_config.window_dim[1], game_config.cell_dim[1]):
+            for x in range(0, game_config.window_dim[0], game_config.cell_dim[0]):
+                row = int(y / game_config.cell_dim[0])
+                col = int(x / game_config.cell_dim[1])
+
+                sprite_key = f'{x},{y}'
+                if sprite_key in self.sprite_map:
+                    cell_sprite = self.sprite_map[sprite_key]
+                    is_alive = self.window_grid.grid[row][col]
+                    cell_sprite.update_cell(
+                        is_alive, game_config.color_mode)
+
+        self.all_sprites.update()
+        self.display_surface.fill((0, 0, 0))
+
 
 class GameConfig:
     def __init__(self, cell_dim, window_dim, color_mode):

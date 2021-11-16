@@ -1,20 +1,14 @@
-from gol_game_pkg.game_types import GameState
 import pygame
 from pygame import Color, Surface
 from pygame.locals import *
-import time
 import sys
-import random
-import gol_game_pkg.game_modes as game_modes
-import gol_game_pkg.grid as grid
 import gol_game_pkg.display as display
 from gol_game_pkg.game_constants import CellColor
-from gol_game_pkg.game_types import GameState2D, GameConfig
+from gol_game_pkg.game_types import GameConfig, GameState2D
 from gol_game_pkg.game_sprites import CellSprite
+from gol_game_pkg.game_grid import WindowGrid
 
 
-# HEIGHT = 600
-# WIDTH = 1000
 ACC = 0.5
 FRIC = -0.12
 
@@ -95,8 +89,6 @@ def cursor_mode_2d(game_config, game_state):
         game_state.display_surface.fill((0, 0, 0))
 
         for entity in game_state.all_sprites:
-            # game_state.display_surface.blit(entity.outline_surf,
-            #                                 entity.outline_rect)
             game_state.display_surface.blit(entity.cell_surf,
                                             entity.cell_rect)
 
@@ -126,31 +118,15 @@ def simualtion_mode_2d(game_config, game_state):
 
         if not simulation_paused:
 
-            for y in range(0, game_config.window_dim[1], game_config.cell_dim[1]):
-                for x in range(0, game_config.window_dim[0], game_config.cell_dim[0]):
-                    row = int(y / game_config.cell_dim[0])
-                    col = int(x / game_config.cell_dim[1])
-
-                    sprite_key = f'{x},{y}'
-                    if sprite_key in game_state.sprite_map:
-                        cell_sprite = game_state.sprite_map[sprite_key]
-                        is_alive = game_state.window_grid.grid[row][col]
-                        cell_sprite.update_cell(
-                            is_alive, game_config.color_mode)
-
-            game_state.all_sprites.update()
-            game_state.display_surface.fill((0, 0, 0))
+            game_state.update_all_cell_sprites(game_config)
 
             for entity in game_state.all_sprites:
-                # game_state.display_surface.blit(entity.outline_surf,
-                #                                 entity.outline_rect)
+
                 game_state.display_surface.blit(entity.cell_surf,
                                                 entity.cell_rect)
 
             game_state.display_surface.blit(text, text_rect)
 
-            # game_state = grid.evaluate_grid(
-            #     game_state, game_config.grid_dim[1], game_config.grid_dim[0])
             updates = game_state.window_grid.evaluate_grid()
             game_state.updates += updates
 
