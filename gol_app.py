@@ -47,29 +47,6 @@ start_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((window_di
                                             manager=manager)
 
 game_gui = GameGui(game_config, manager)
-# mode_rect = pygame.Rect((window_dim[0] // 2 - 100,
-#                          window_dim[1] // 2 + 50), (200, 50))
-
-# speed_rect = pygame.Rect((window_dim[0] // 2 - 100,
-#                           window_dim[1] // 2 + 100), (200, 50))
-
-# scale_rect = pygame.Rect((window_dim[0] // 2 - 100,
-#                           window_dim[1] // 2 + 150), (200, 50))
-
-# color_rect = pygame.Rect((window_dim[0] // 2 - 100,
-#                           window_dim[1] // 2 + 200), (200, 50))
-
-# mode_button = pygame_gui.elements.UIButton(mode_rect, text=f'Game Mode: {game_config.get_current_selection("mode")}',
-#                                            manager=manager)
-
-# speed_button = pygame_gui.elements.UIButton(speed_rect, text=f'Sim Speed: {game_config.get_current_selection("fps")}',
-#                                             manager=manager)
-
-# scale_button = pygame_gui.elements.UIButton(scale_rect, text=f'Cell Size: {game_config.get_current_selection("scale")}',
-#                                             manager=manager)
-
-# color_button = pygame_gui.elements.UIButton(color_rect, text=f'Color: {game_config.get_current_selection("color")}',
-#                                             manager=manager)
 
 clock = pygame.time.Clock()
 is_running = True
