@@ -30,6 +30,29 @@ GAME_COLORS = {"ORANGE": (245, 100, 32),
                "GRAY": (20, 20, 35),
                "WHITE": (255, 255, 255)}
 
+MODE_LIST = [["random start", 0],
+             ["custom start", 1]]
+
+FPS_LIST = [["1 FPS", 1],
+            ["2 FPS", 2],
+            ["4 FPS", 4],
+            ["8 FPS", 8]]
+
+SCALE_LIST = [["micro", 5, 5],
+              ["small", 10, 10],
+              ["normal", 20, 20],
+              ["large", 40, 40],
+              ["Collosal", 80, 80]]
+
+COLOR_LIST = [["green", 0],
+              ["colorful", 1],
+              ["disco", 2]]
+
+DEFAULT_SELECTION_DICT = {"mode": 0,
+                          "fps": 1,
+                          "scale": 2,
+                          "color": 0}
+
 
 class CellColor(enum.Enum):
     Default = 0

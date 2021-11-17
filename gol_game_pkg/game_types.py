@@ -1,4 +1,5 @@
 import pygame
+from gol_game_pkg.game_constants import COLOR_LIST, FPS_LIST, MODE_LIST, SCALE_LIST, DEFAULT_SELECTION_DICT
 import gol_game_pkg.game_grid
 
 
@@ -43,10 +44,33 @@ class GameState2D(GameState):
 
 
 class GameConfig:
-    def __init__(self, cell_dim, window_dim, color_mode):
+    def __init__(self, cell_dim, window_dim):
         self.cell_dim = cell_dim
         self.window_dim = window_dim
-        self.color_mode = color_mode
+        self.color_mode = DEFAULT_SELECTION_DICT["color"]
+        self.setting_dict = dict()
+        self.selection_dict = dict()
+        self.selection_dict['mode'] = 0
+        self.selection_dict['fps'] = 0
+        self.selection_dict['scale'] = 0
+        self.selection_dict['color'] = 0
+
+        self.set_setting_lists(MODE_LIST, FPS_LIST,
+                               SCALE_LIST, COLOR_LIST, DEFAULT_SELECTION_DICT)
+
+    def set_setting_lists(self, mode_list, fps_list, scale_list, color_list, default_selections_dict):
+        self.setting_dict["mode"] = mode_list
+        self.setting_dict["fps"] = fps_list
+        self.setting_dict["scale"] = scale_list
+        self.setting_dict["color"] = color_list
+        self.selection_dict['mode'] = default_selections_dict["mode"]
+        self.selection_dict['fps'] = default_selections_dict["fps"]
+        self.selection_dict['scale'] = default_selections_dict["scale"]
+        self.selection_dict['color'] = default_selections_dict["color"]
+
+    def get_current_selection(self, setting_key):
+        current_selection = self.selection_dict[setting_key]
+        return self.setting_dict[setting_key][current_selection]
 
     def update(self, cell_dim, window_dim, color_mode):
         self.cell_dim = cell_dim

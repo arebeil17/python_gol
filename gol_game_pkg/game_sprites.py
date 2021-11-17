@@ -61,18 +61,8 @@ def initiaize_grid_sprites(game_config, game_state):
 
 def dynamic_grid_sprite_update(game_config, game_state, cell_dim, window_dim):
 
-    # game_grid = grid.initialize_grid_from_window_size(cell_dim, window_dim)
-
-    # rows = len(game_grid)
-    # cols = len(game_grid[0])
-
     game_state.all_sprites.empty()
 
-    # game_state = GameState2D(
-    #     window_grid, 0, game_state.fps, game_state.display_surface, game_state.all_sprites, {})
-
-    # game_config = GameConfig(cell_dim, window_dim, game_config.color_mode)
-    #window_grid, updates, fps, display_surface, all_sprites, sprite_map
     game_state.update(WindowGrid(cell_dim, window_dim), 0, game_state.fps,
                       game_state.display_surface, game_state.all_sprites, {})
 
