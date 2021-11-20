@@ -1,3 +1,12 @@
+# --------------------------------------------------
+#     Author: Andres Rebeil
+#
+#     Python Version: Tested with 3.10.0
+#
+#     Requires the following third party packages:
+#         PyGame
+#         PyGameGui
+# --------------------------------------------------
 import gol_game_pkg.game_control as game_control
 from gol_game_pkg.game_constants import GameMode
 import gol_game_pkg.game_sprites as game_sprites
