@@ -3,7 +3,6 @@ from pygame import Color, Surface
 import pygame_gui
 from pygame.locals import *
 import sys
-import gol_game_pkg.display as display
 from gol_game_pkg.game_constants import CellColor
 from gol_game_pkg.game_types import GameConfig, GameState2D
 import gol_game_pkg.game_sprites as game_sprites
