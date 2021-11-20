@@ -30,8 +30,13 @@ GAME_COLORS = {"ORANGE": (245, 100, 32),
                "GRAY": (25, 25, 35),
                "WHITE": (255, 255, 255)}
 
+DEFAULT_CELL_DIM = [20, 20]
+DEFAULT_WINDOW_DIM = [1200, 800]
+DEFAULT_FPS = 2
+
 MODE_LIST = [["Random start", 0],
-             ["Custom start", 1]]
+             ["Custom start", 1],
+             ["Expander", 2]]
 
 FPS_LIST = [["1 FPS", 1],
             ["2 FPS", 2],

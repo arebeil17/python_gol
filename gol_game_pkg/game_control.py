@@ -8,14 +8,15 @@ from gol_game_pkg.game_constants import CellColor
 from gol_game_pkg.game_types import GameConfig, GameState2D
 import gol_game_pkg.game_sprites as game_sprites
 from gol_game_pkg.game_grid import WindowGrid
-
-
-cell_dim = [20, 20]
-window_dim = [1200, 800]
-FPS = 2
+import gol_game_pkg.game_constants as game_constants
 
 
 def initialize_game():
+
+    window_dim = game_constants.DEFAULT_WINDOW_DIM
+    cell_dim = game_constants.DEFAULT_CELL_DIM
+    frames_per_sec = game_constants.DEFAULT_FPS
+
     pygame.init()
     vec = pygame.math.Vector2  # 2 for two dimensional
 
@@ -28,7 +29,7 @@ def initialize_game():
     window_grid = WindowGrid(cell_dim, window_dim)
 
     game_state = GameState2D(
-        window_grid, 0, FPS, display_surface, all_sprites, sprite_map)
+        window_grid, 0, frames_per_sec, display_surface, all_sprites, sprite_map)
 
     game_config = GameConfig(cell_dim, window_dim)
 
@@ -121,9 +122,8 @@ def cursor_mode_2d(game_config, game_state):
 
     cursor_mode_fps = 30
     exit_cursor_mode = False
-    for entity in game_state.all_sprites:
-        game_state.display_surface.blit(entity.outline_surf,
-                                        entity.outline_rect)
+    game_sprites.initialize_grid_frame(game_state)
+
     while not exit_cursor_mode:
         mouse_up_detected = False
         for event in pygame.event.get():
@@ -170,14 +170,16 @@ def cursor_mode_2d(game_config, game_state):
 
 
 def simualtion_mode_2d(game_gui, game_config, game_state):
-
+    cell_growth_in_progress = True
     simulation_paused = False
     generations = 0
-    for entity in game_state.all_sprites:
-        game_state.display_surface.blit(entity.outline_surf,
-                                        entity.outline_rect)
+    updates = 0
+
+    game_sprites.initialize_grid_frame(game_state)
+
     while True:
-        info_string = f'Generation: {generations} Updates: {game_state.updates}'
+        prev_updates = updates
+        info_string = f'Generations: {generations} Updates: {game_state.updates} Status: {"ACTIVE" if cell_growth_in_progress else "INACTIVE"}'
         text, text_rect = game_gui.create_text_bar(
             game_config.window_dim, info_string)
 
@@ -189,7 +191,7 @@ def simualtion_mode_2d(game_gui, game_config, game_state):
                 print("Simulation toggled Enter key pressed!")
                 simulation_paused = not simulation_paused
 
-        if not simulation_paused:
+        if not simulation_paused and cell_growth_in_progress:
 
             game_state.update_all_cell_sprites(game_config)
 
@@ -206,6 +208,16 @@ def simualtion_mode_2d(game_gui, game_config, game_state):
             generations += 1
 
             pygame.display.flip()
+        else:
+            game_state.update_all_cell_sprites(game_config)
+            for entity in game_state.all_sprites:
+                game_state.display_surface.blit(entity.cell_surf,
+                                                entity.cell_rect)
+            game_state.display_surface.blit(text, text_rect)
+            pygame.display.flip()
 
         game_state.all_sprites.remove(text_rect)
         pygame.time.Clock().tick(game_state.fps)
+
+        if prev_updates == game_state.updates:
+            cell_growth_in_progress = False

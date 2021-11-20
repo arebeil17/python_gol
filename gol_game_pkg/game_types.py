@@ -36,8 +36,7 @@ class GameState2D(GameState):
                 if sprite_key in self.sprite_map:
                     cell_sprite = self.sprite_map[sprite_key]
                     is_alive = self.window_grid.grid[row][col]
-                    cell_sprite.update_cell(
-                        is_alive, game_config.color_mode)
+                    cell_sprite.update_cell(is_alive, game_config.color_mode)
 
         self.all_sprites.update()
         self.display_surface.fill((0, 0, 0))

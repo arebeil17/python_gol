@@ -86,7 +86,7 @@ class GameGui:
         return text, textRect
 
     def create_text_bar(self, window_dim, info_string):
-        
+
         white = (255, 255, 255)
 
         font = pygame.font.Font('freesansbold.ttf', 20)
