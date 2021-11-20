@@ -49,8 +49,6 @@ def run_main_menu(game_gui, game_state, game_config):
 
     while is_running:
 
-        text, text_rect = game_gui.create_menu_text_bar(game_config.window_dim)
-
         time_delta = clock.tick(60)/1000.0
 
         setting_update = False
@@ -113,7 +111,15 @@ def run_main_menu(game_gui, game_state, game_config):
                                             entity.cell_rect)
 
         game_gui.manager.draw_ui(game_state.display_surface)
-        game_state.display_surface.blit(text, text_rect)
+
+        text1, text_rect1 = game_gui.create_title_text_bar(
+            game_config.window_dim)
+
+        text2, text_rect2 = game_gui.create_title_outline_text_bar(
+            game_config.window_dim, text_rect1)
+
+        game_state.display_surface.blit(text2, text_rect2)
+        game_state.display_surface.blit(text1, text_rect1)
 
         pygame.display.update()
 
@@ -179,42 +185,37 @@ def simualtion_mode_2d(game_gui, game_config, game_state):
 
     while True:
         prev_updates = updates
-        info_string = f'Generations: {generations} Updates: {game_state.updates} Status: {"ACTIVE" if cell_growth_in_progress else "INACTIVE"}'
-        text, text_rect = game_gui.create_text_bar(
-            game_config.window_dim, info_string)
 
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
-            elif event.type == pygame.KEYUP and event.key == pygame.K_RETURN:
+            elif event.type == pygame.KEYUP and (event.key == pygame.K_RETURN or event.key == pygame.K_SPACE):
                 print("Simulation toggled Enter key pressed!")
                 simulation_paused = not simulation_paused
 
+        game_state.update_all_cell_sprites(game_config)
+        for entity in game_state.all_sprites:
+            game_state.display_surface.blit(entity.cell_surf,
+                                            entity.cell_rect)
+
         if not simulation_paused and cell_growth_in_progress:
 
-            game_state.update_all_cell_sprites(game_config)
-
-            for entity in game_state.all_sprites:
-
-                game_state.display_surface.blit(entity.cell_surf,
-                                                entity.cell_rect)
-
-            game_state.display_surface.blit(text, text_rect)
+            info_string = f'Generations: {generations} Updates: {game_state.updates} Status: {"ACTIVE"}'
+            text, text_rect = game_gui.create_text_bar(game_config.window_dim,
+                                                       info_string)
 
             updates = game_state.window_grid.evaluate_grid()
             game_state.updates += updates
 
             generations += 1
 
-            pygame.display.flip()
         else:
-            game_state.update_all_cell_sprites(game_config)
-            for entity in game_state.all_sprites:
-                game_state.display_surface.blit(entity.cell_surf,
-                                                entity.cell_rect)
-            game_state.display_surface.blit(text, text_rect)
-            pygame.display.flip()
+            info_string = f'Generations: {generations} Updates: {game_state.updates} Status: {"PAUSED" if simulation_paused else "INACTIVE"}'
+            text, text_rect = game_gui.create_text_bar(game_config.window_dim,
+                                                       info_string)
+        game_state.display_surface.blit(text, text_rect)
+        pygame.display.flip()
 
         game_state.all_sprites.remove(text_rect)
         pygame.time.Clock().tick(game_state.fps)

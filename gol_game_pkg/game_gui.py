@@ -71,15 +71,46 @@ class GameGui:
         print(
             f'{setting_key} : {game_config.selection_dict[setting_key]}')
 
-    def create_menu_text_bar(self, window_dim):
+    def create_title_text_bar(self, window_dim):
 
-        white = (255, 255, 255)
+        color = (46, 83, 205)  # Nice blue
+        font_size = 96
 
-        font = pygame.font.SysFont('arial', 96, False, False)
-
-        text = font.render('Game of Life', True, white, None)
+        font = pygame.font.SysFont('arial', font_size, True, False)
+        text = font.render('Game of Life', True, color, None)
 
         textRect = text.get_rect()
+
+        textRect.center = (window_dim[0] // 2, (window_dim[1] // 2) // 2)
+
+        return text, textRect
+
+    def create_title_outline_text_bar(self, window_dim, textRect):
+
+        outline_color = (255, 255, 255)
+        font_size = 96
+
+        font = pygame.font.SysFont('arial', font_size, True, False)
+        text = font.render('Game of Life', True, outline_color, None)
+
+        outline = 2
+        outlineSurf = font.render('Game of Life', True, outline_color)
+        outlineSize = outlineSurf.get_size()
+        textSurf = pygame.Surface(
+            (outlineSize[0] + outline*2, outlineSize[1] + 2*outline))
+        textRect = textSurf.get_rect()
+        offsets = [(ox, oy)
+                   for ox in range(-outline, 2*outline, outline)
+                   for oy in range(-outline, 2*outline, outline)
+                   if ox != 0 or ox != 0]
+        for ox, oy in offsets:
+            px, py = textRect.center
+            textSurf.blit(outlineSurf, outlineSurf.get_rect(
+                center=(px+ox, py+oy)))
+        innerText = font.render(
+            'Game of Life', True, outline_color).convert_alpha()
+        textSurf.blit(innerText, innerText.get_rect(
+            center=textRect.center))
 
         textRect.center = (window_dim[0] // 2, (window_dim[1] // 2) // 2)
 
