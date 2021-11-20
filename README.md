@@ -9,3 +9,7 @@ Python Version: Tested with 3.10.0
 Requires the following third party packages:
 PyGame
 PyGameGui
+
+Instructions:
+
+python gol_app.py
