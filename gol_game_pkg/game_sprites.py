@@ -45,6 +45,12 @@ class CellSprite(pygame.sprite.Sprite):
         return pygame.mouse.get_pressed()[0] and self.cell_rect.collidepoint(pygame.mouse.get_pos())
 
 
+def initialize_grid_frame(game_state):
+    for entity in game_state.all_sprites:
+        game_state.display_surface.blit(entity.outline_surf,
+                                        entity.outline_rect)
+
+
 def initiaize_grid_sprites(game_config, game_state):
     for y in range(0, game_config.window_dim[1], game_config.cell_dim[1]):
         for x in range(0, game_config.window_dim[0], game_config.cell_dim[0]):
@@ -59,14 +65,15 @@ def initiaize_grid_sprites(game_config, game_state):
             game_state.sprite_map[f'{x},{y}'] = cell
 
 
-def dynamic_grid_sprite_update(game_config, game_state, cell_dim, window_dim):
+def dynamic_grid_sprite_update(game_config, game_state):
 
     game_state.all_sprites.empty()
 
-    game_state.update(WindowGrid(cell_dim, window_dim), 0, game_state.fps,
+    game_state.update(WindowGrid(game_config.cell_dim, game_config.window_dim), 0, game_state.fps,
                       game_state.display_surface, game_state.all_sprites, {})
 
-    game_config.update(cell_dim, window_dim, game_config.color_mode)
+    game_config.update(game_config.cell_dim,
+                       game_config.window_dim, game_config.color_mode)
 
     game_state.window_grid.randomize_grid()
 

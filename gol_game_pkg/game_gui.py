@@ -3,8 +3,18 @@ import pygame_gui
 
 
 class GameGui:
-    def __init__(self, game_config, manager):
+    def __init__(self, game_config):
 
+        manager = pygame_gui.UIManager(
+            (game_config.window_dim[0], game_config.window_dim[1]), 'menu.json')
+
+        self.background = pygame.Surface(
+            (game_config.window_dim[0], game_config.window_dim[1]))
+
+        self.start_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((game_config.window_dim[0] // 2 - 100,
+                                                                                    game_config.window_dim[1] // 2), (200, 50)),
+                                                         text='Start',
+                                                         manager=manager)
         self.manager = manager
 
         self.mode_rect = pygame.Rect((game_config.window_dim[0] // 2 - 100,
@@ -60,3 +70,31 @@ class GameGui:
 
         print(
             f'{setting_key} : {game_config.selection_dict[setting_key]}')
+
+    def create_menu_text_bar(self, window_dim):
+
+        white = (255, 255, 255)
+
+        font = pygame.font.SysFont('arial', 96, False, False)
+
+        text = font.render('Game of Life', True, white, None)
+
+        textRect = text.get_rect()
+
+        textRect.center = (window_dim[0] // 2, (window_dim[1] // 2) // 2)
+
+        return text, textRect
+
+    def create_text_bar(self, window_dim, info_string):
+        
+        white = (255, 255, 255)
+
+        font = pygame.font.Font('freesansbold.ttf', 20)
+
+        text = font.render(info_string, True, white, None)
+
+        textRect = text.get_rect()
+
+        textRect.center = (window_dim[0] // 2, window_dim[1] - 20)
+
+        return text, textRect
