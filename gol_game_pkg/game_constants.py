@@ -35,8 +35,7 @@ DEFAULT_WINDOW_DIM = [1200, 800]
 DEFAULT_FPS = 2
 
 MODE_LIST = [["Random start", 0],
-             ["Custom start", 1],
-             ["Expander", 2]]
+             ["Custom start", 1]]
 
 FPS_LIST = [["1 FPS", 1],
             ["2 FPS", 2],
@@ -68,4 +67,3 @@ class CellColor(enum.Enum):
 class GameMode(enum.Enum):
     Random = 0
     Cursor = 1
-    expander = 2
