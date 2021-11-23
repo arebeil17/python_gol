@@ -27,8 +27,35 @@ GAME_COLORS = {"ORANGE": (245, 100, 32),
                "YELLOW": (233, 220, 9),
                "RED": (245, 30, 60),
                "BLACK": (0, 0, 0),
-               "GRAY": (20, 20, 35),
+               "GRAY": (25, 25, 35),
                "WHITE": (255, 255, 255)}
+
+DEFAULT_CELL_DIM = [20, 20]
+DEFAULT_WINDOW_DIM = [1200, 800]
+DEFAULT_FPS = 2
+
+MODE_LIST = [["Random start", 0],
+             ["Custom start", 1]]
+
+FPS_LIST = [["1 FPS", 1],
+            ["2 FPS", 2],
+            ["4 FPS", 4],
+            ["8 FPS", 8]]
+
+SCALE_LIST = [["micro", 5, 5],
+              ["small", 10, 10],
+              ["normal", 20, 20],
+              ["large", 40, 40],
+              ["Collosal", 80, 80]]
+
+COLOR_LIST = [["green", 0],
+              ["colorful", 1],
+              ["disco", 2]]
+
+DEFAULT_SELECTION_DICT = {"mode": 0,
+                          "fps": 1,
+                          "scale": 2,
+                          "color": 1}
 
 
 class CellColor(enum.Enum):
@@ -37,6 +64,6 @@ class CellColor(enum.Enum):
     Disco = 2
 
 
-class InitMode(enum.Enum):
-    Cursor = 0
-    Random = 1
+class GameMode(enum.Enum):
+    Random = 0
+    Cursor = 1
